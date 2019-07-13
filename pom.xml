@@ -18,13 +18,24 @@
 
     <modules>
         <module>hw01-maven</module>
+        <module>hw02-collection</module>
     </modules>
 
     <properties>
+        <!--region General-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <com.google.guava.version>28.0-jre</com.google.guava.version>
+        <java.version>11</java.version>
+        <google.guava.version>28.0-jre</google.guava.version>
+        <!--endregion-->
+
+        <!--region Libs-->
+        <com.google.guava.version>${google.guava.version}</com.google.guava.version>
+        <!--endregion-->
+
+        <!--region Plugins-->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <!--endregion-->
     </properties>
 
     <dependencyManagement>
@@ -43,7 +54,6 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>3.1.1</version>
                 </plugin>
