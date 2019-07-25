@@ -75,7 +75,7 @@ public class TestExecutor {
                 runAfter();
 
                 statistics.incSuccess();
-            } catch (RuntimeException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 statistics.incFailed();
             } finally {

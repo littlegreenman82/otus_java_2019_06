@@ -6,6 +6,18 @@ public class Statistics {
     private int assertsFailed  = 0;
     private int assertsAll     = 0;
 
+    public int getAssertsSuccess() {
+        return assertsSuccess;
+    }
+
+    public int getAssertsFailed() {
+        return assertsFailed;
+    }
+
+    public int getAssertsAll() {
+        return assertsAll;
+    }
+
     void incSuccess() {
         this.assertsSuccess++;
     }
