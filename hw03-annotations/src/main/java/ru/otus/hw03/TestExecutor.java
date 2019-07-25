@@ -14,16 +14,15 @@ import java.util.List;
 public class TestExecutor {
 
     private Object     instance;
+    private Class<?>   aClass;
     private Statistics statistics = new Statistics();
 
     private List<Method> beforeMethods = new ArrayList<>();
     private List<Method> afterMethods  = new ArrayList<>();
     private List<Method> testMethods   = new ArrayList<>();
 
-    public TestExecutor(String className) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Class<?> aClass = Class.forName(className);
-
-        instance = aClass.getConstructors()[0].newInstance();
+    public TestExecutor(String className) throws ClassNotFoundException, IllegalAccessException {
+        aClass = Class.forName(className);
 
         scanAnnotations(aClass);
     }
@@ -69,12 +68,14 @@ public class TestExecutor {
     private void runTests() {
         for (Method method : testMethods) {
             try {
+                instance = aClass.getConstructors()[0].newInstance();
+
                 runBefore();
                 runMethod(method);
                 runAfter();
 
                 statistics.incSuccess();
-            } catch (RuntimeException | IllegalAccessException | InvocationTargetException e) {
+            } catch (RuntimeException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
                 e.printStackTrace();
                 statistics.incFailed();
             } finally {

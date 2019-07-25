@@ -28,16 +28,16 @@ public class TestExample {
 
     @Test
     private void test1() {
-        System.out.println("Run test");
+        System.out.println("Run test 1");
     }
 
     @Test
     private void test2() {
-        throw new IllegalArgumentException("test exception");
+        throw new IllegalArgumentException("test 2 exception");
     }
 
     @Test
     private void test3() {
-        System.out.println("Run test");
+        System.out.println("Run test 3");
     }
 }
