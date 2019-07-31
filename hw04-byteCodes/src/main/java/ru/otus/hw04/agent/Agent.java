@@ -27,7 +27,7 @@ public class Agent {
                                     byte[] classfileBuffer) {
 
                 if (className.contains(PROJECT_PATH)) {
-                    return addProxyMethod(classfileBuffer);
+                    return logToConsoleAnnotatedMethod(classfileBuffer);
                 }
 
                 return classfileBuffer;
@@ -36,7 +36,7 @@ public class Agent {
 
     }
 
-    private static byte[] addProxyMethod(byte[] classfileBuffer) {
+    private static byte[] logToConsoleAnnotatedMethod(byte[] classfileBuffer) {
         ClassReader cr = new ClassReader(classfileBuffer);
 
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_MAXS);
