@@ -9,5 +9,6 @@ class Application {
         testLogging.testMixedTypedParams("1", 2);
         testLogging.testEmptyParam();
         testLogging.testNotLoggedMethod();
+        TestLogging.testStaticMethodSupport("Статический метод");
     }
 }

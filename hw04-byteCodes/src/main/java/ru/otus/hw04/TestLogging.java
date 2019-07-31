@@ -4,6 +4,9 @@ import ru.otus.hw04.annotations.Log;
 
 @SuppressWarnings("WeakerAccess")
 public class TestLogging {
+    @Log
+    public static void testStaticMethodSupport(String p1) {
+    }
 
     @Log
     public void testWrapperTypedParams(Integer p1, String p2) {

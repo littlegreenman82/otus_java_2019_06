@@ -43,14 +43,14 @@ public class Agent {
         ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
             class LogAnnotationExistMethodVisitor extends GeneratorAdapter {
                 private String name;
-                private String descriptor;
 
-                boolean hasAnnotation = false;
+                boolean hasAnnotation;
+                boolean isStatic;
 
                 LogAnnotationExistMethodVisitor(MethodVisitor mv, int access, String name, String descriptor) {
                     super(Opcodes.ASM5, mv, access, name, descriptor);
                     this.name = name;
-                    this.descriptor = descriptor;
+                    isStatic = (access & 8) != 0;
                 }
 
                 @Override
@@ -65,7 +65,6 @@ public class Agent {
                                 false);
 
                         mv.visitFieldInsn(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
-
                         String descString = makeDescString();
                         String argumentString = makeArgString();
                         loadArgs(mv);
@@ -79,7 +78,11 @@ public class Agent {
                     Type[] argumentTypes = getArgumentTypes();
 
                     for (int i = 0; i < argumentTypes.length; i++) {
-                        loadArg(mv, i + 1, argumentTypes[i].toString());
+                        if (isStatic) {
+                            loadArg(mv, i, argumentTypes[i].toString());
+                        } else {
+                            loadArg(mv, i + 1, argumentTypes[i].toString());
+                        }
                     }
                 }
 
