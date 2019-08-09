@@ -40,7 +40,7 @@ public class GCAnalyzeApplication {
             System.out.println("Memory overload. Worked time, sec: " + workedTime/1000);
         }
 
-        gcAnalyzeApplication.printReport(leakProcess.getSize());
+        gcAnalyzeApplication.printReport(leakProcess);
     }
 
 
@@ -68,7 +68,7 @@ public class GCAnalyzeApplication {
         }
     }
 
-    private void printReport(int size) {
+    private void printReport(MemoryLeakProcess process) {
 
         Map<String, List<GarbageCollectionNotificationInfo>> infoByGcName
                 = notificationInfos.stream().collect(Collectors.groupingBy(GarbageCollectionNotificationInfo::getGcName));
@@ -81,7 +81,9 @@ public class GCAnalyzeApplication {
         if (workedTime != 0)
             System.out.println("All duration / Worked Time: " + (summaryStatistics.getSum() / (float) workedTime));
 
-        System.out.println("Objects count: " + size + "\n");
+        System.out.println("Objects count: " + process.getSize() + "\n");
+        System.out.println("ADD operation count: " + process.getAddIterationCount() + "\n");
+        System.out.println("Operation per sec: " + (process.getAddIterationCount() / (workedTime / 1000)) + "\n");
         // By gcName
         infoByGcName.forEach((gcName, nameInfos) -> {
                                  System.out.println(gcName + ":\n");
