@@ -21,6 +21,7 @@
         <module>hw02-collection</module>
         <module>hw03-annotations</module>
         <module>hw04-byteCodes</module>
+        <module>hw05-gc</module>
     </modules>
 
     <properties>
