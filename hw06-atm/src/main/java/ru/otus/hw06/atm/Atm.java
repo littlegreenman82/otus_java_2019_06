@@ -9,7 +9,11 @@ import java.util.*;
 @SuppressWarnings("WeakerAccess")
 public class Atm {
 
-    private final List<CassetteInterface> cassettes = new ArrayList<>();
+    private final TreeSet<CassetteInterface> cassettes = new TreeSet<>(
+            Comparator.comparingInt((CassetteInterface o) -> o.getFaceValue().getValue()).reversed()
+    );
+
+    private Atm(){}
 
     private void addCassette(CassetteInterface cassette) {
         this.cassettes.add(cassette);
@@ -25,11 +29,7 @@ public class Atm {
         throw new IllegalArgumentException();
     }
 
-    private void sortCassettesDesc() {
-        cassettes.sort(Comparator.comparingInt((CassetteInterface o) -> o.getFaceValue().getValue()).reversed());
-    }
-
-    public List<CassetteInterface> getCassettes() {
+    public TreeSet<CassetteInterface> getCassettes() {
         return cassettes;
     }
 
@@ -59,7 +59,7 @@ public class Atm {
 
         if (amount != 0) {
             throw new IllegalArgumentException("Сумма должна быть кратной: "
-                                                       + cassettes.get(cassettes.size() - 1).getFaceValue().getValue());
+                                                       + cassettes.last().getFaceValue().getValue());
         }
 
 
@@ -83,8 +83,6 @@ public class Atm {
         atm.addCassette(new Cassette(FaceValue.THOUSAND));
         atm.addCassette(new Cassette(FaceValue.HUNDRED));
         atm.addCassette(new Cassette(FaceValue.FIVE_HUNDRED));
-
-        atm.sortCassettesDesc();
 
         return atm;
     }

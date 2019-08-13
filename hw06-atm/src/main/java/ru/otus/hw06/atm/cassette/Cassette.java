@@ -20,6 +20,7 @@ public class Cassette implements CassetteInterface{
         this.count += faceValueCount;
     }
 
+    @Override
     public void remove(int count) {
         if (this.count != 0)
             this.count -= count;
