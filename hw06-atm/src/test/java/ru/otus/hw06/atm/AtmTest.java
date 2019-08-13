@@ -61,10 +61,28 @@ class AtmTest {
 
     @Test
     void withdraw() {
-        atm.deposit(FaceValue.FIFTY, 5);
-        Map<Integer, Integer> withdraw = atm.withdraw(200);
-        assertEquals(atm.balance(), 50);
+        atm.deposit(FaceValue.FIFTY, 10);
+        atm.deposit(FaceValue.HUNDRED, 10);
+        atm.deposit(FaceValue.FIVE_HUNDRED, 10);
+        atm.deposit(FaceValue.THOUSAND, 10);
 
-        withdraw.forEach((faceValue, integer) -> System.out.println());
+        Map<Integer, Integer> withdraw = atm.withdraw(10650);
+        assertEquals(atm.balance(), 5850);
+
+        withdraw.forEach((Integer faceValue, Integer count) -> {
+                             if (faceValue == 1000) {
+                                 assertEquals(count.intValue(), 10);
+                             }
+                             if (faceValue == 500) {
+                                 assertEquals(count.intValue(), 1);
+                             }
+                             if (faceValue == 100) {
+                                 assertEquals(count.intValue(), 1);
+                             }
+                             if (faceValue == 50) {
+                                 assertEquals(count.intValue(), 1);
+                             }
+                         }
+                        );
     }
 }
