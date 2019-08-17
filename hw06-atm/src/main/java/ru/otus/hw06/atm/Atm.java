@@ -84,7 +84,7 @@ public class Atm {
             }
         }
 
-        throw new UnsupportedFaceValueException("Кассета с номинало " + faceValue.getValue() + "не установлена");
+        throw new UnsupportedFaceValueException("Кассета с номиналом " + faceValue.getValue() + "не установлена");
     }
 
     public static Atm init() {
