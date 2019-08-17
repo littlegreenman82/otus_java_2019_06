@@ -2,8 +2,12 @@ package ru.otus.hw06;
 
 import ru.otus.hw06.atm.Atm;
 import ru.otus.hw06.atm.cassette.FaceValue;
+import ru.otus.hw06.atm.exception.NotEnoughAmountException;
+import ru.otus.hw06.atm.exception.UnsupportedFaceValueException;
 
 import java.util.Map;
+
+import static java.lang.System.out;
 
 public class Starter {
 
@@ -15,23 +19,23 @@ public class Starter {
         atm.deposit(FaceValue.FIVE_HUNDRED, 10);
         atm.deposit(FaceValue.THOUSAND, 10);
 
-        System.out.println("Баланс терминала: " + atm.balance());
-        System.out.println("----------------------------------");
+        out.println("Баланс терминала: " + atm.balance());
+        out.println("----------------------------------");
 
         int withdrawAmount = 14650;
-        System.out.println("Выдача: " + withdrawAmount);
+        out.println("Выдача: " + withdrawAmount);
         try {
-            Map<Integer, Integer> withdrawBanknotes = atm.withdraw(withdrawAmount);
-            withdrawBanknotes.forEach((key, count) ->
-                                              System.out.println("Купюр номиналом: " + key +
+            Map<FaceValue, Integer> withdrawBanknotes = atm.withdraw(withdrawAmount);
+            withdrawBanknotes.forEach((faceValue, count) ->
+                                              out.println("Купюр номиналом: " + faceValue.getValue() +
                                                                          ", кол-во: " + count +
-                                                                         " (" + (key * count) + ")"
+                                                                  " (" + (faceValue.getValue() * count) + ")"
                                                                 )
                                      );
-        } catch (IllegalArgumentException e) {
-            System.out.println("Ошибка при выдачи: " + e.getMessage());
+        } catch (UnsupportedFaceValueException | NotEnoughAmountException e) {
+            out.println("Ошибка при выдачи: " + e.getMessage());
         }
-        System.out.println("----------------------------------");
-        System.out.println("Остаток на счете: " + atm.balance());
+        out.println("----------------------------------");
+        out.println("Остаток на счете: " + atm.balance());
     }
 }

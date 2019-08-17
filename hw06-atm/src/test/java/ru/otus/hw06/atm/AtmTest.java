@@ -3,14 +3,15 @@ package ru.otus.hw06.atm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.otus.hw06.atm.cassette.CassetteInterface;
+import ru.otus.hw06.atm.cassette.Cassette;
 import ru.otus.hw06.atm.cassette.FaceValue;
+import ru.otus.hw06.atm.exception.NotEnoughAmountException;
+import ru.otus.hw06.atm.exception.UnsupportedFaceValueException;
 
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Test ATM")
 class AtmTest {
@@ -30,7 +31,7 @@ class AtmTest {
     @Test
     void getCassettes_isSorted_ASC() {
         int last = 100000;
-        for (CassetteInterface cassette : atm.getCassettes()) {
+        for (Cassette cassette : atm.getCassettes()) {
             assertThat(cassette.getFaceValue().getValue()).isLessThan(last);
             last = cassette.getFaceValue().getValue();
         }
@@ -66,21 +67,29 @@ class AtmTest {
         atm.deposit(FaceValue.FIVE_HUNDRED, 10);
         atm.deposit(FaceValue.THOUSAND, 10);
 
-        Map<Integer, Integer> withdraw = atm.withdraw(10650);
-        assertEquals(atm.balance(), 5850);
+        Map<FaceValue, Integer> withdraw = null;
 
-        withdraw.forEach((Integer faceValue, Integer count) -> {
-                             if (faceValue == 1000) {
-                                 assertEquals(count.intValue(), 10);
+        try {
+            withdraw = atm.withdraw(10650);
+        } catch (NotEnoughAmountException | UnsupportedFaceValueException e) {
+            System.out.println(e.getMessage());
+        }
+
+        assertEquals(5850, atm.balance());
+        assertNotNull(withdraw);
+
+        withdraw.forEach((FaceValue faceValue, Integer count) -> {
+                             if (faceValue.getValue() == 1000) {
+                                 assertEquals(10, count.intValue());
                              }
-                             if (faceValue == 500) {
-                                 assertEquals(count.intValue(), 1);
+                             if (faceValue.getValue() == 500) {
+                                 assertEquals(1, count.intValue());
                              }
-                             if (faceValue == 100) {
-                                 assertEquals(count.intValue(), 1);
+                             if (faceValue.getValue() == 100) {
+                                 assertEquals(1, count.intValue());
                              }
-                             if (faceValue == 50) {
-                                 assertEquals(count.intValue(), 1);
+                             if (faceValue.getValue() == 50) {
+                                 assertEquals(1, count.intValue());
                              }
                          }
                         );
