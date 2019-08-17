@@ -14,17 +14,18 @@ public class Starter {
     public static void main(String[] args) {
         var atm = Atm.init();
 
-        atm.deposit(FaceValue.FIFTY, 10);
-        atm.deposit(FaceValue.HUNDRED, 10);
-        atm.deposit(FaceValue.FIVE_HUNDRED, 10);
-        atm.deposit(FaceValue.THOUSAND, 10);
-
-        out.println("Баланс терминала: " + atm.balance());
-        out.println("----------------------------------");
-
-        int withdrawAmount = 14650;
-        out.println("Выдача: " + withdrawAmount);
         try {
+            atm.deposit(FaceValue.FIFTY, 10);
+            atm.deposit(FaceValue.HUNDRED, 10);
+            atm.deposit(FaceValue.FIVE_HUNDRED, 10);
+            atm.deposit(FaceValue.THOUSAND, 10);
+
+            out.println("Баланс терминала: " + atm.balance());
+            out.println("----------------------------------");
+
+            int withdrawAmount = 14650;
+            out.println("Выдача: " + withdrawAmount);
+
             Map<FaceValue, Integer> withdrawBanknotes = atm.withdraw(withdrawAmount);
             withdrawBanknotes.forEach((faceValue, count) ->
                                               out.println("Купюр номиналом: " + faceValue.getValue() +
@@ -33,7 +34,7 @@ public class Starter {
                                                                 )
                                      );
         } catch (UnsupportedFaceValueException | NotEnoughAmountException e) {
-            out.println("Ошибка при выдачи: " + e.getMessage());
+            out.println("Ошибка:" + e.getMessage());
         }
         out.println("----------------------------------");
         out.println("Остаток на счете: " + atm.balance());

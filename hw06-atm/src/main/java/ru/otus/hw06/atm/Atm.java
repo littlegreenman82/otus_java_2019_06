@@ -21,7 +21,7 @@ public class Atm {
         return cassettes;
     }
 
-    public void deposit(FaceValue faceValue, int banknotesCount) {
+    public void deposit(FaceValue faceValue, int banknotesCount) throws UnsupportedFaceValueException {
         Cassette cassette = findCassetteByFaceValue(faceValue);
         cassette.add(banknotesCount);
     }
@@ -77,14 +77,14 @@ public class Atm {
         this.cassettes.add(cassette);
     }
 
-    private Cassette findCassetteByFaceValue(FaceValue faceValue) {
+    private Cassette findCassetteByFaceValue(FaceValue faceValue) throws UnsupportedFaceValueException {
         for (Cassette cassette : cassettes) {
             if (cassette.getFaceValue().equals(faceValue)) {
                 return cassette;
             }
         }
 
-        throw new IllegalArgumentException();
+        throw new UnsupportedFaceValueException("Кассета с номинало " + faceValue.getValue() + "не установлена");
     }
 
     public static Atm init() {

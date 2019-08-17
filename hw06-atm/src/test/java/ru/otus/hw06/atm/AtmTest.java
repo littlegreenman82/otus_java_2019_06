@@ -52,8 +52,10 @@ class AtmTest {
 
     @Test
     void balance() {
-        atm.deposit(FaceValue.FIFTY, 5);
-        atm.deposit(FaceValue.HUNDRED, 100);
+        assertDoesNotThrow(() -> {
+            atm.deposit(FaceValue.FIFTY, 5);
+            atm.deposit(FaceValue.HUNDRED, 100);
+        });
 
         int balance = (FaceValue.HUNDRED.getValue() * 100) + (FaceValue.FIFTY.getValue() * 5);
 
@@ -62,10 +64,13 @@ class AtmTest {
 
     @Test
     void withdraw() {
-        atm.deposit(FaceValue.FIFTY, 10);
-        atm.deposit(FaceValue.HUNDRED, 10);
-        atm.deposit(FaceValue.FIVE_HUNDRED, 10);
-        atm.deposit(FaceValue.THOUSAND, 10);
+        assertDoesNotThrow(() -> {
+            atm.deposit(FaceValue.FIFTY, 10);
+            atm.deposit(FaceValue.HUNDRED, 10);
+            atm.deposit(FaceValue.FIVE_HUNDRED, 10);
+            atm.deposit(FaceValue.THOUSAND, 10);
+        });
+
 
         Map<FaceValue, Integer> withdraw = null;
 
