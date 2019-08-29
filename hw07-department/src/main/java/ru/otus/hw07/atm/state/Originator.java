@@ -7,8 +7,6 @@ import ru.otus.hw07.atm.exception.StateNotFoundException;
 public class Originator {
     private byte[] state;
 
-    public Originator(){}
-
     public Cassette getState() {
         return SerializationUtils.deserialize(state);
     }
