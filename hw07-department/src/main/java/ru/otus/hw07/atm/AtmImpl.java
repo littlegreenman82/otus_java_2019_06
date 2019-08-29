@@ -4,7 +4,10 @@ import ru.otus.hw07.atm.cassette.Cassette;
 import ru.otus.hw07.atm.cassette.CassetteImpl;
 import ru.otus.hw07.atm.cassette.FaceValue;
 import ru.otus.hw07.atm.exception.NotEnoughAmountException;
+import ru.otus.hw07.atm.exception.StateNotFoundException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
+import ru.otus.hw07.atm.state.CareTaker;
+import ru.otus.hw07.atm.state.Originator;
 
 import java.util.*;
 
@@ -13,6 +16,10 @@ public class AtmImpl implements Atm {
     private TreeSet<Cassette> cassettes = new TreeSet<>(
             Comparator.comparingInt((Cassette o) -> o.getFaceValue().getValue()).reversed()
     );
+
+    private Originator originator = new Originator();
+
+    private CareTaker careTaker = new CareTaker();
 
     @Override
     public SortedSet<Cassette> getCassettes() {
@@ -43,6 +50,28 @@ public class AtmImpl implements Atm {
     }
 
     @Override
+    public void reset() throws StateNotFoundException {
+        TreeSet<Cassette> savedCassettes = new TreeSet<>(
+                Comparator.comparingInt((Cassette o) -> o.getFaceValue().getValue()).reversed()
+        );
+
+        for (Cassette cassette : cassettes) {
+            originator.getStateFromMemento(careTaker.get(cassette));
+            savedCassettes.add(originator.getState());
+        }
+
+        cassettes = savedCassettes;
+    }
+
+    @Override
+    public void saveState() {
+        for (Cassette cassette : cassettes) {
+            originator.setState(cassette);
+            careTaker.add(cassette, originator.saveStateToMemento());
+        }
+    }
+
+    @Override
     public Map<FaceValue, Integer> withdraw(int amount) throws NotEnoughAmountException, UnsupportedFaceValueException {
 
         Map<FaceValue, Integer> withdraw = new TreeMap<>(Collections.reverseOrder());
@@ -50,6 +79,7 @@ public class AtmImpl implements Atm {
         checkWithdrawal(amount);
 
         for (Cassette cassette : cassettes) {
+
             int withdrawBanknotesCount = cassette.withdraw(amount);
 
             amount -= withdrawBanknotesCount * cassette.getFaceValue().getValue();
