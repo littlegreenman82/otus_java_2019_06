@@ -14,4 +14,5 @@ public interface Cassette extends Serializable {
     int acceptableWithdrawal(int amount);
 
     int withdraw(int amount);
+
 }

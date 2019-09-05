@@ -23,16 +23,17 @@ public class DepartmentManager {
         atmList.remove(atm);
     }
 
-    int balance() {
+    public int balance() {
         int balance = 0;
 
-        for (Atm atm : atmList)
+        for (Atm atm : atmList) {
             balance += atm.balance();
+        }
 
         return balance;
     }
 
-    void reset() throws StateNotFoundException {
+    public void reset() throws StateNotFoundException {
         for (Atm atm: atmList)
             atm.reset();
     }

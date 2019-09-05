@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DepartmentTest {
 
-    private Department department;
+    private DepartmentManager department;
 
     private Atm atm1;
     private Atm atm2;
@@ -22,8 +22,8 @@ class DepartmentTest {
         atm2 = AtmImpl.initState2();
         atm3 = AtmImpl.initState3();
 
-        Department department = new Department();
-        department.atmList.attach(atm1, atm2, atm3);
+        DepartmentManager department = new DepartmentManager();
+        department.attach(atm1, atm2, atm3);
         this.department = department;
     }
 

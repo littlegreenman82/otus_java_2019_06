@@ -4,7 +4,7 @@ import ru.otus.hw07.atm.AtmImpl;
 import ru.otus.hw07.atm.exception.NotEnoughAmountException;
 import ru.otus.hw07.atm.exception.StateNotFoundException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
-import ru.otus.hw07.department.Department;
+import ru.otus.hw07.department.DepartmentManager;
 
 public class Application {
     private static final String LINE_DELIMITER = "-----------------";
@@ -14,8 +14,8 @@ public class Application {
         var atm2 = AtmImpl.initState2();
         var atm3 = AtmImpl.initState3();
 
-        Department department = new Department();
-        department.atmList.attach(atm1, atm2, atm3);
+        DepartmentManager department = new DepartmentManager();
+        department.attach(atm1, atm2, atm3);
 
         department.saveState();
 

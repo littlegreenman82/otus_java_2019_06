@@ -39,11 +39,7 @@ public class CassetteImpl implements Cassette {
         if (amount >= faceValue.getValue()) {
             int neededBanknotesCount = amount / faceValue.getValue();
 
-            if (neededBanknotesCount > count) {
-                returnCount = count;
-            } else {
-                returnCount = neededBanknotesCount;
-            }
+            returnCount = Math.min(neededBanknotesCount, count);
         }
 
         return returnCount;
