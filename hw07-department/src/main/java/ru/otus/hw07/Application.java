@@ -2,9 +2,13 @@ package ru.otus.hw07;
 
 import ru.otus.hw07.atm.AtmImpl;
 import ru.otus.hw07.atm.exception.NotEnoughAmountException;
-import ru.otus.hw07.atm.exception.StateNotFoundException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
-import ru.otus.hw07.department.DepartmentManager;
+import ru.otus.hw07.department.DepartmentImpl;
+import ru.otus.hw07.department.service.ResetStateService;
+import ru.otus.hw07.department.service.SaveStateService;
+import ru.otus.hw07.department.service.UpdateBalanceService;
+
+import static java.lang.System.out;
 
 public class Application {
     private static final String LINE_DELIMITER = "-----------------";
@@ -14,32 +18,31 @@ public class Application {
         var atm2 = AtmImpl.initState2();
         var atm3 = AtmImpl.initState3();
 
-        DepartmentManager department = new DepartmentManager();
+        DepartmentImpl department = new DepartmentImpl();
         department.attach(atm1, atm2, atm3);
 
-        department.saveState();
+        department.accept(new SaveStateService());
+        department.accept(new UpdateBalanceService());
 
-        System.out.println(LINE_DELIMITER);
-        System.out.println("Базовый баланс: " + department.balance());
-        System.out.println(LINE_DELIMITER);
+        out.println(LINE_DELIMITER);
+        out.println("Базовый баланс: " + department.getBalance());
+        out.println(LINE_DELIMITER);
 
         try {
             atm1.withdraw(1000);
             atm3.withdraw(30000);
         } catch (UnsupportedFaceValueException | NotEnoughAmountException e) {
-            System.out.println(e.getMessage());
+            out.println(e.getMessage());
         }
 
+        department.accept(new UpdateBalanceService());
+        out.println("Баланс после снятия: " + department.getBalance());
+        out.println(LINE_DELIMITER);
 
-        System.out.println("Баланс после снятия: " + department.balance());
-        System.out.println(LINE_DELIMITER);
+        department.accept(new ResetStateService());
 
-        try {
-            department.reset();
-        } catch (StateNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
 
-        System.out.println("Баланс после отката к сохраненному состоянию: " + department.balance());
+        department.accept(new UpdateBalanceService());
+        out.println("Баланс после отката к сохраненному состоянию: " + department.getBalance());
     }
 }

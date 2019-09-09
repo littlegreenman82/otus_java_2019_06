@@ -4,14 +4,19 @@ import ru.otus.hw07.atm.cassette.Cassette;
 import ru.otus.hw07.atm.cassette.CassetteImpl;
 import ru.otus.hw07.atm.cassette.FaceValue;
 import ru.otus.hw07.atm.exception.NotEnoughAmountException;
-import ru.otus.hw07.atm.exception.StateNotFoundException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
 import ru.otus.hw07.atm.state.CareTaker;
 import ru.otus.hw07.atm.state.Originator;
+import ru.otus.hw07.department.base.Service;
+import ru.otus.hw07.department.service.UpdateBalanceService;
 
 import java.util.*;
 
+import static java.lang.System.out;
+
 public class AtmImpl implements Atm {
+
+    private int balance = 0;
 
     private TreeSet<Cassette> cassettes = new TreeSet<>(
             Comparator.comparingInt((Cassette o) -> o.getFaceValue().getValue()).reversed()
@@ -31,6 +36,26 @@ public class AtmImpl implements Atm {
         this.cassettes.add(cassette);
     }
 
+    public static Atm initState1() {
+        var atm = new AtmImpl();
+
+        atm.addCassette(new CassetteImpl(FaceValue.FIFTY));
+        atm.addCassette(new CassetteImpl(FaceValue.THOUSAND));
+        atm.addCassette(new CassetteImpl(FaceValue.HUNDRED));
+        atm.addCassette(new CassetteImpl(FaceValue.FIVE_HUNDRED));
+
+        try {
+            atm.deposit(FaceValue.FIFTY, 10);
+            atm.deposit(FaceValue.THOUSAND, 10);
+            atm.deposit(FaceValue.HUNDRED, 10);
+            atm.deposit(FaceValue.FIVE_HUNDRED, 10);
+        } catch (UnsupportedFaceValueException e) {
+            out.println(e.getMessage());
+        }
+
+        return atm;
+    }
+
     @Override
     public void deposit(FaceValue faceValue, int banknotesCount) throws UnsupportedFaceValueException {
         var cassette = findCassetteByFaceValue(faceValue);
@@ -38,37 +63,24 @@ public class AtmImpl implements Atm {
         cassette.add(banknotesCount);
     }
 
-    @Override
-    public int balance() {
-        int balance = 0;
+    public static Atm initState2() {
+        var atm = new AtmImpl();
 
-        for (Cassette cassette : cassettes) {
-            balance += cassette.balance();
+        atm.addCassette(new CassetteImpl(FaceValue.FIFTY));
+        atm.addCassette(new CassetteImpl(FaceValue.THOUSAND));
+        atm.addCassette(new CassetteImpl(FaceValue.HUNDRED));
+        atm.addCassette(new CassetteImpl(FaceValue.FIVE_HUNDRED));
+
+        try {
+            atm.deposit(FaceValue.FIFTY, 20);
+            atm.deposit(FaceValue.THOUSAND, 20);
+            atm.deposit(FaceValue.HUNDRED, 20);
+            atm.deposit(FaceValue.FIVE_HUNDRED, 20);
+        } catch (UnsupportedFaceValueException e) {
+            out.println(e.getMessage());
         }
 
-        return balance;
-    }
-
-    @Override
-    public void reset() throws StateNotFoundException {
-        TreeSet<Cassette> savedCassettes = new TreeSet<>(
-                Comparator.comparingInt((Cassette o) -> o.getFaceValue().getValue()).reversed()
-        );
-
-        for (Cassette cassette : cassettes) {
-            originator.getStateFromMemento(careTaker.get(cassette));
-            savedCassettes.add(originator.getState());
-        }
-
-        cassettes = savedCassettes;
-    }
-
-    @Override
-    public void saveState() {
-        for (Cassette cassette : cassettes) {
-            originator.setState(cassette);
-            careTaker.add(cassette, originator.saveStateToMemento());
-        }
+        return atm;
     }
 
     @Override
@@ -95,71 +107,6 @@ public class AtmImpl implements Atm {
         return withdraw;
     }
 
-    private void checkWithdrawal(int amount) throws NotEnoughAmountException, UnsupportedFaceValueException {
-        if (amount > balance())
-            throw new NotEnoughAmountException("Недостаточно суммы для выдачи");
-
-        for (Cassette cassette : cassettes) {
-            int withdrawBanknotesCount = cassette.acceptableWithdrawal(amount);
-            amount -= withdrawBanknotesCount * cassette.getFaceValue().getValue();
-        }
-
-        if (amount != 0) {
-            throw new UnsupportedFaceValueException("Сумма должна быть кратной: "
-                                                            + cassettes.last().getFaceValue().getValue());
-        }
-    }
-
-    private Cassette findCassetteByFaceValue(FaceValue faceValue) throws UnsupportedFaceValueException {
-        for (Cassette cassette : cassettes) {
-            if (cassette.getFaceValue().equals(faceValue)) {
-                return cassette;
-            }
-        }
-
-        throw new UnsupportedFaceValueException("Кассета с номиналом " + faceValue.getValue() + "не установлена");
-    }
-
-    public static Atm initState1() {
-        var atm = new AtmImpl();
-
-        atm.addCassette(new CassetteImpl(FaceValue.FIFTY));
-        atm.addCassette(new CassetteImpl(FaceValue.THOUSAND));
-        atm.addCassette(new CassetteImpl(FaceValue.HUNDRED));
-        atm.addCassette(new CassetteImpl(FaceValue.FIVE_HUNDRED));
-
-        try {
-            atm.deposit(FaceValue.FIFTY, 10);
-            atm.deposit(FaceValue.THOUSAND, 10);
-            atm.deposit(FaceValue.HUNDRED, 10);
-            atm.deposit(FaceValue.FIVE_HUNDRED, 10);
-        } catch (UnsupportedFaceValueException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return atm;
-    }
-
-    public static Atm initState2() {
-        var atm = new AtmImpl();
-
-        atm.addCassette(new CassetteImpl(FaceValue.FIFTY));
-        atm.addCassette(new CassetteImpl(FaceValue.THOUSAND));
-        atm.addCassette(new CassetteImpl(FaceValue.HUNDRED));
-        atm.addCassette(new CassetteImpl(FaceValue.FIVE_HUNDRED));
-
-        try {
-            atm.deposit(FaceValue.FIFTY, 20);
-            atm.deposit(FaceValue.THOUSAND, 20);
-            atm.deposit(FaceValue.HUNDRED, 20);
-            atm.deposit(FaceValue.FIVE_HUNDRED, 20);
-        } catch (UnsupportedFaceValueException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return atm;
-    }
-
     public static Atm initState3() {
         var atm = new AtmImpl();
 
@@ -174,9 +121,76 @@ public class AtmImpl implements Atm {
             atm.deposit(FaceValue.HUNDRED, 30);
             atm.deposit(FaceValue.FIVE_HUNDRED, 30);
         } catch (UnsupportedFaceValueException e) {
-            System.out.println(e.getMessage());
+            out.println(e.getMessage());
         }
 
         return atm;
+    }
+
+    @Override
+    public void setCassettes(TreeSet<Cassette> cassettes) {
+        this.cassettes = cassettes;
+    }
+
+    @Override
+    public void accept(Service service) {
+        service.visit(this);
+    }
+
+    @Override
+    public Originator getOriginator() {
+        return originator;
+    }
+
+    @Override
+    public void setOriginator(Originator originator) {
+        this.originator = originator;
+    }
+
+    @Override
+    public CareTaker getCareTaker() {
+        return careTaker;
+    }
+
+    @Override
+    public void setCareTaker(CareTaker careTaker) {
+        this.careTaker = careTaker;
+    }
+
+    private Cassette findCassetteByFaceValue(FaceValue faceValue) throws UnsupportedFaceValueException {
+        for (Cassette cassette : cassettes) {
+            if (cassette.getFaceValue().equals(faceValue)) {
+                return cassette;
+            }
+        }
+
+        throw new UnsupportedFaceValueException("Кассета с номиналом " + faceValue.getValue() + "не установлена");
+    }
+
+    @Override
+    public int getBalance() {
+        return balance;
+    }
+
+    @Override
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    private void checkWithdrawal(int amount) throws NotEnoughAmountException, UnsupportedFaceValueException {
+        accept(new UpdateBalanceService());
+
+        if (amount > getBalance())
+            throw new NotEnoughAmountException("Недостаточно суммы для выдачи");
+
+        for (Cassette cassette : cassettes) {
+            int withdrawBanknotesCount = cassette.acceptableWithdrawal(amount);
+            amount -= withdrawBanknotesCount * cassette.getFaceValue().getValue();
+        }
+
+        if (amount != 0) {
+            throw new UnsupportedFaceValueException("Сумма должна быть кратной: "
+                    + cassettes.last().getFaceValue().getValue());
+        }
     }
 }
