@@ -2,31 +2,29 @@ package ru.otus.hw07.department.service;
 
 import ru.otus.hw07.atm.Atm;
 import ru.otus.hw07.atm.cassette.Cassette;
+import ru.otus.hw07.department.base.BalanceService;
 import ru.otus.hw07.department.base.Department;
-import ru.otus.hw07.department.base.Service;
 
 import java.util.List;
 import java.util.SortedSet;
 
-public class UpdateBalanceService implements Service {
+public class FetchBalanceService implements BalanceService {
     @Override
-    public void visit(Department department) {
+    public int visit(Department department) {
 
         List<Atm> atmList = department.getAtmList();
 
         int balance = 0;
 
         for (Atm atm : atmList) {
-            atm.accept(this);
-
-            balance += atm.getBalance();
+            balance += atm.accept(this);
         }
 
-        department.setBalance(balance);
+        return balance;
     }
 
     @Override
-    public void visit(Atm atm) {
+    public int visit(Atm atm) {
         SortedSet<Cassette> cassettes = atm.getCassettes();
 
         int balance = 0;
@@ -34,6 +32,6 @@ public class UpdateBalanceService implements Service {
             balance += cassette.balance();
         }
 
-        atm.setBalance(balance);
+        return balance;
     }
 }

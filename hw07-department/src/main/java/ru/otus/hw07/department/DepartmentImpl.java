@@ -1,14 +1,15 @@
 package ru.otus.hw07.department;
 
 import ru.otus.hw07.atm.Atm;
-import ru.otus.hw07.department.base.DepartmentBase;
+import ru.otus.hw07.department.base.BalanceService;
+import ru.otus.hw07.department.base.Department;
 import ru.otus.hw07.department.base.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DepartmentImpl extends DepartmentBase {
+public class DepartmentImpl implements Department {
 
     private List<Atm> atmList = new ArrayList<>();
 
@@ -19,6 +20,11 @@ public class DepartmentImpl extends DepartmentBase {
     @Override
     public void accept(Service service) {
         service.visit(this);
+    }
+
+    @Override
+    public int accept(BalanceService service) {
+        return service.visit(this);
     }
 
     public void attach(Atm atm) {

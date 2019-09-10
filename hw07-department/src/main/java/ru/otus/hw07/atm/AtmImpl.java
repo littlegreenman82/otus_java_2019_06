@@ -7,16 +7,15 @@ import ru.otus.hw07.atm.exception.NotEnoughAmountException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
 import ru.otus.hw07.atm.state.CareTaker;
 import ru.otus.hw07.atm.state.Originator;
+import ru.otus.hw07.department.base.BalanceService;
 import ru.otus.hw07.department.base.Service;
-import ru.otus.hw07.department.service.UpdateBalanceService;
+import ru.otus.hw07.department.service.FetchBalanceService;
 
 import java.util.*;
 
 import static java.lang.System.out;
 
 public class AtmImpl implements Atm {
-
-    private int balance = 0;
 
     private TreeSet<Cassette> cassettes = new TreeSet<>(
             Comparator.comparingInt((Cassette o) -> o.getFaceValue().getValue()).reversed()
@@ -138,6 +137,11 @@ public class AtmImpl implements Atm {
     }
 
     @Override
+    public int accept(BalanceService service) {
+        return service.visit(this);
+    }
+
+    @Override
     public Originator getOriginator() {
         return originator;
     }
@@ -167,20 +171,10 @@ public class AtmImpl implements Atm {
         throw new UnsupportedFaceValueException("Кассета с номиналом " + faceValue.getValue() + "не установлена");
     }
 
-    @Override
-    public int getBalance() {
-        return balance;
-    }
-
-    @Override
-    public void setBalance(int balance) {
-        this.balance = balance;
-    }
-
     private void checkWithdrawal(int amount) throws NotEnoughAmountException, UnsupportedFaceValueException {
-        accept(new UpdateBalanceService());
 
-        if (amount > getBalance())
+
+        if (amount > accept(new FetchBalanceService()))
             throw new NotEnoughAmountException("Недостаточно суммы для выдачи");
 
         for (Cassette cassette : cassettes) {

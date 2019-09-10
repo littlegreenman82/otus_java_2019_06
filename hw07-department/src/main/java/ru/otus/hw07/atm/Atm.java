@@ -6,6 +6,7 @@ import ru.otus.hw07.atm.exception.NotEnoughAmountException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
 import ru.otus.hw07.atm.state.CareTaker;
 import ru.otus.hw07.atm.state.Originator;
+import ru.otus.hw07.department.base.BalanceService;
 import ru.otus.hw07.department.base.Service;
 
 import java.util.Map;
@@ -20,10 +21,6 @@ public interface Atm {
 
     void setCassettes(TreeSet<Cassette> cassettes);
 
-    int getBalance();
-
-    void setBalance(int balance);
-
     Originator getOriginator();
 
     void setOriginator(Originator originator);
@@ -35,6 +32,8 @@ public interface Atm {
     void deposit(FaceValue faceValue, int banknotesCount) throws UnsupportedFaceValueException;
 
     void accept(Service service);
+
+    int accept(BalanceService service);
 
     Map<FaceValue, Integer> withdraw(int amount) throws UnsupportedFaceValueException, NotEnoughAmountException;
 }

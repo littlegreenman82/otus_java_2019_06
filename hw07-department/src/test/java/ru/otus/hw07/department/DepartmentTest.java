@@ -4,9 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.hw07.atm.Atm;
 import ru.otus.hw07.atm.AtmImpl;
+import ru.otus.hw07.department.service.FetchBalanceService;
 import ru.otus.hw07.department.service.ResetStateService;
 import ru.otus.hw07.department.service.SaveStateService;
-import ru.otus.hw07.department.service.UpdateBalanceService;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,8 +39,8 @@ class DepartmentTest {
     @Test
     void resetIfAmountWasWithdrawn() {
         department.accept(new SaveStateService());
-        department.accept(new UpdateBalanceService());
-        int balanceInState = department.getBalance();
+
+        int balanceInState = department.accept(new FetchBalanceService());
 
         assertDoesNotThrow(() -> {
             atm1.withdraw(5000);
@@ -49,16 +49,15 @@ class DepartmentTest {
             department.accept(new ResetStateService());
         });
 
-        department.accept(new UpdateBalanceService());
-        int balance = department.getBalance();
+
+        int balance = department.accept(new FetchBalanceService());
 
         assertEquals(balanceInState, balance);
     }
 
     @Test
     void balance() {
-        department.accept(new UpdateBalanceService());
-        int balance = department.getBalance();
+        int balance = department.accept(new FetchBalanceService());
 
         assertEquals(99000, balance);
     }
