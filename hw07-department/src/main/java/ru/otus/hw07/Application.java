@@ -4,9 +4,6 @@ import ru.otus.hw07.atm.AtmImpl;
 import ru.otus.hw07.atm.exception.NotEnoughAmountException;
 import ru.otus.hw07.atm.exception.UnsupportedFaceValueException;
 import ru.otus.hw07.department.DepartmentImpl;
-import ru.otus.hw07.department.service.FetchBalanceService;
-import ru.otus.hw07.department.service.ResetStateService;
-import ru.otus.hw07.department.service.SaveStateService;
 
 import static java.lang.System.out;
 
@@ -21,10 +18,10 @@ public class Application {
         DepartmentImpl department = new DepartmentImpl();
         department.attach(atm1, atm2, atm3);
 
-        department.accept(new SaveStateService());
+        department.saveState();
 
         out.println(LINE_DELIMITER);
-        out.println("Базовый баланс: " + department.accept(new FetchBalanceService()));
+        out.println("Базовый баланс: " + department.getBalance());
         out.println(LINE_DELIMITER);
 
         try {
@@ -34,11 +31,11 @@ public class Application {
             out.println(e.getMessage());
         }
 
-        out.println("Баланс после снятия: " + department.accept(new FetchBalanceService()));
+        out.println("Баланс после снятия: " + department.getBalance());
         out.println(LINE_DELIMITER);
 
-        department.accept(new ResetStateService());
+        department.resetState();
 
-        out.println("Баланс после отката к сохраненному состоянию: " + department.accept(new FetchBalanceService()));
+        out.println("Баланс после отката к сохраненному состоянию: " + department.getBalance());
     }
 }

@@ -8,7 +8,9 @@ public interface Department {
 
     List<Atm> getAtmList();
 
-    void accept(Service service);
+    void saveState();
 
-    int accept(BalanceService service);
+    void resetState();
+
+    int getBalance();
 }

@@ -5,23 +5,13 @@ import ru.otus.hw07.atm.cassette.Cassette;
 import ru.otus.hw07.atm.exception.StateNotFoundException;
 import ru.otus.hw07.atm.state.CareTaker;
 import ru.otus.hw07.atm.state.Originator;
-import ru.otus.hw07.department.base.Department;
 import ru.otus.hw07.department.base.Service;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class ResetStateService implements Service {
-
-    @Override
-    public void visit(Department department) {
-        List<Atm> atmList = department.getAtmList();
-        for (Atm atm : atmList) {
-            atm.accept(this);
-        }
-    }
 
     @Override
     public void visit(Atm atm) {
