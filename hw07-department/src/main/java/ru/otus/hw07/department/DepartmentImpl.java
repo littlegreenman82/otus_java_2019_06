@@ -12,11 +12,17 @@ import java.util.List;
 
 public class DepartmentImpl implements Department {
 
-    private final FetchBalanceService fetchBalanceService = new FetchBalanceService();
-    private final ResetStateService resetStateService = new ResetStateService();
-    private final SaveStateService saveStateService = new SaveStateService();
+    private final FetchBalanceService fetchBalanceService;
+    private final ResetStateService resetStateService;
+    private final SaveStateService saveStateService;
 
     private List<Atm> atmList = new ArrayList<>();
+
+    public DepartmentImpl() {
+        fetchBalanceService = new FetchBalanceService();
+        resetStateService = new ResetStateService();
+        saveStateService = new SaveStateService();
+    }
 
     public List<Atm> getAtmList() {
         return atmList;
