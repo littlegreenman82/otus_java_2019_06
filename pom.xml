@@ -40,7 +40,7 @@
         <mockito.version>3.0.0</mockito.version>
         <assertj.version>3.12.2</assertj.version>
         <javax.json.version>1.1.4</javax.json.version>
-        <common.lang3>3.9</common.lang3>
+        <commons-lang3>3.9</commons-lang3>
         <!--endregion-->
 
         <!--region Plugins-->
@@ -56,7 +56,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>${common.lang3}</version>
+                <version>${commons-lang3}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/javax.json/javax.json-api -->
             <dependency>
