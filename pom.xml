@@ -25,6 +25,7 @@
         <module>hw06-atm</module>
         <module>hw07-department</module>
         <module>hw08-serialization</module>
+        <module>hw09-jdbc</module>
     </modules>
 
     <properties>
@@ -42,6 +43,9 @@
         <assertj.version>3.12.2</assertj.version>
         <javax.json.version>1.1.4</javax.json.version>
         <commons-lang3>3.9</commons-lang3>
+        <h2.version>1.4.199</h2.version>
+        <slf4j-api.version>1.7.28</slf4j-api.version>
+        <logback.version>1.2.3</logback.version>
         <!--endregion-->
 
         <!--region Plugins-->
@@ -53,6 +57,30 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-core -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
