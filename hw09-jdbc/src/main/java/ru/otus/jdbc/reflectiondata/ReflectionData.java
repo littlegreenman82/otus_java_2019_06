@@ -9,7 +9,8 @@ public class ReflectionData {
     private Field idField;
 
     private Field[] fields;
-
+    
+    private String className;
 
     public boolean isHasIdAnnotation() {
         return hasIdAnnotation;
@@ -33,5 +34,13 @@ public class ReflectionData {
 
     public void setFields(Field[] fields) {
         this.fields = fields;
+    }
+    
+    public String getClassName() {
+        return className;
+    }
+    
+    public void setClassName(String className) {
+        this.className = className;
     }
 }

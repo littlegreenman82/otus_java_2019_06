@@ -1,5 +1,8 @@
 package ru.otus.jdbc.querybuilder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +18,25 @@ public class DynamicQueryBuilder {
     private List<String> columns;
 
     private List<Object> values;
-
-
+    
+    private List<String> whereClauseColumns;
+    
+    private Logger logger = LoggerFactory.getLogger(DynamicQueryBuilder.class);
+    
     public DynamicQueryBuilder() {
-        this.columns = new ArrayList<>();
-        this.values = new ArrayList<>();
+        this.columns            = new ArrayList<>();
+        this.whereClauseColumns = new ArrayList<>();
+        this.values             = new ArrayList<>();
+    }
+    
+    public DynamicQueryBuilder addWhereClauseColumns(String col, Object value) {
+        if (col == null || value == null)
+            return this;
+        
+        whereClauseColumns.add(col);
+        values.add(value);
+        
+        return this;
     }
 
     public DynamicQueryBuilder setQueryType(QueryType queryType) {
@@ -39,19 +56,15 @@ public class DynamicQueryBuilder {
         return Boolean.TRUE;
     }
 
-    public DynamicQueryBuilder resetColumnsList() {
-        columns.clear();
-        return this;
-    }
-
-    public Object[] getValues() {
-        return values.toArray();
-    }
-
     public String query() {
         StringBuilder sb = new StringBuilder();
-
+    
+        logger.info("Generating sql");
+        
         switch (this.queryType) {
+            case SELECT:
+                returnQueryForSelect(sb);
+                break;
             case UPDATE:
                 returnQueryForUpdate(sb);
                 break;
@@ -61,8 +74,32 @@ public class DynamicQueryBuilder {
             default:
                 break;
         }
-
+    
+        logger.info("Generated sql: {}", sb);
+    
         return sb.toString();
+    }
+    
+    public DynamicQueryBuilder resetColumnsList() {
+        columns.clear();
+        return this;
+    }
+    
+    public Object[] getValues() {
+        return values.toArray();
+    }
+    
+    private void returnQueryForSelect(StringBuilder sb) {
+        sb.append("SELECT * FROM ").append(tableName).append(" WHERE ");
+        
+        addColumnsToQueryForUpdate(sb, whereClauseColumns);
+    }
+    
+    private void returnQueryForUpdate(StringBuilder sb) {
+        sb.append("UPDATE ").append(tableName).append(" SET ");
+        addColumnsToQueryForUpdate(sb, columns);
+        sb.append(" WHERE ");
+        addColumnsToQueryForUpdate(sb, whereClauseColumns);
     }
 
     private void returnQueryForInsert(StringBuilder sb) {
@@ -84,10 +121,11 @@ public class DynamicQueryBuilder {
         sb.append(" ) ");
 
     }
-
-    private void returnQueryForUpdate(StringBuilder sb) {
-        sb.append("UPDATE ").append(tableName).append(" SET ");
-        addColumnsToQueryForUpdate(sb, columns);
+    
+    public enum QueryType {
+        SELECT,
+        INSERT,
+        UPDATE
     }
 
     private void addColumnsToQueryForUpdate(StringBuilder sb, List<String> cols) {
@@ -97,10 +135,5 @@ public class DynamicQueryBuilder {
                 sb.append(STR_COMMA_SPACE);
             }
         }
-    }
-
-    public enum QueryType {
-        INSERT,
-        UPDATE
     }
 }
