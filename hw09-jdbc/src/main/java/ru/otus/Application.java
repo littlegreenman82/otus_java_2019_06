@@ -8,14 +8,14 @@ import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 public class Application {
 
     public static void main(String[] args) {
-        SessionManagerJdbc sessionManagerJdbc = new SessionManagerJdbc(new H2());
     
-        DbExecutorImpl.createUserTable(sessionManagerJdbc);
-        DbExecutorImpl.createAccountTable(sessionManagerJdbc);
+        try (SessionManagerJdbc sessionManagerJdbc = new SessionManagerJdbc(new H2())) {
         
-        DbExecutorImpl<User> userDbExecutor = new DbExecutorImpl<>(sessionManagerJdbc);
-
-        try {
+            DbExecutorImpl.createUserTable(sessionManagerJdbc);
+            DbExecutorImpl.createAccountTable(sessionManagerJdbc);
+        
+            DbExecutorImpl<User> userDbExecutor = new DbExecutorImpl<>(sessionManagerJdbc);
+            
             User user = new User();
             user.setName("Bob");
             user.setAge(25);
@@ -46,6 +46,5 @@ public class Application {
             e.printStackTrace();
         }
     
-        sessionManagerJdbc.close();
     }
 }

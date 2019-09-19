@@ -7,14 +7,17 @@ import ru.otus.api.DatabaseSession;
 import ru.otus.api.DbExecutor;
 import ru.otus.api.SessionManager;
 import ru.otus.jdbc.annotation.Id;
+import ru.otus.jdbc.exception.DbExecutorException;
 import ru.otus.jdbc.exception.MissingIdAnnotationException;
 import ru.otus.jdbc.querybuilder.DynamicQueryBuilder;
 import ru.otus.jdbc.reflectiondata.ReflectionData;
-import ru.otus.jdbc.sessionmanager.SessionManagerJdbc;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +33,7 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         this.sessionManager = sessionManager;
     }
     
-    public static void createUserTable(SessionManager sessionManagerJdbc) {
+    public static void createUserTable(SessionManager sessionManagerJdbc) throws DbExecutorException {
         sessionManagerJdbc.beginSession();
         
         
@@ -43,10 +46,11 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         } catch (SQLException e) {
             e.printStackTrace();
             sessionManagerJdbc.rollbackSession();
+            throw new DbExecutorException();
         }
     }
     
-    public static void createAccountTable(SessionManagerJdbc sessionManagerJdbc) {
+    public static void createAccountTable(SessionManager sessionManagerJdbc) throws DbExecutorException {
         sessionManagerJdbc.beginSession();
         
         try (PreparedStatement pst = sessionManagerJdbc.getCurrentSession()
@@ -58,11 +62,45 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         } catch (SQLException e) {
             e.printStackTrace();
             sessionManagerJdbc.rollbackSession();
+            throw new DbExecutorException();
+        }
+    }
+    
+    public static void deleteUserTable(SessionManager sessionManagerJdbc) throws DbExecutorException {
+        sessionManagerJdbc.beginSession();
+        
+        
+        try (PreparedStatement pst = sessionManagerJdbc.getCurrentSession()
+                                                       .getConnection()
+                                                       .prepareStatement("drop table user")) {
+            
+            pst.executeUpdate();
+            sessionManagerJdbc.commitSession();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            sessionManagerJdbc.rollbackSession();
+            throw new DbExecutorException();
+        }
+    }
+    
+    public static void deleteAccountTable(SessionManager sessionManagerJdbc) throws DbExecutorException {
+        sessionManagerJdbc.beginSession();
+        
+        try (PreparedStatement pst = sessionManagerJdbc.getCurrentSession()
+                                                       .getConnection()
+                                                       .prepareStatement("drop table account")) {
+            
+            pst.executeUpdate();
+            sessionManagerJdbc.commitSession();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            sessionManagerJdbc.rollbackSession();
+            throw new DbExecutorException();
         }
     }
     
     @Override
-    public void create(T objectData) throws IllegalAccessException {
+    public void create(T objectData) throws IllegalAccessException, DbExecutorException {
         logger.info("============CREATE OBJECT============");
         ReflectionData reflectionData = getReflectionData(objectData.getClass());
         
@@ -100,13 +138,14 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         } catch (SQLException e) {
             logger.error("Object creating error {} with message {}", objectData, e.getMessage());
             sessionManager.rollbackSession();
+            throw new DbExecutorException();
         }
     
         logger.info(END);
     }
     
     @Override
-    public void update(T objectData) throws IllegalAccessException {
+    public void update(T objectData) throws IllegalAccessException, DbExecutorException {
         logger.info("============UPDATE OBJECT============");
         ReflectionData reflectionData = getReflectionData(objectData.getClass());
         
@@ -142,18 +181,20 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         } catch (SQLException e) {
             logger.error("Object updating error {} with message {}", objectData, e.getMessage());
             sessionManager.rollbackSession();
+            throw new DbExecutorException();
         }
         
         logger.info(END);
     }
     
     @Override
-    public void createOrUpdate(T objectData) throws IllegalAccessException {
+    public void createOrUpdate(T objectData) throws IllegalAccessException, DbExecutorException {
         logger.info("============CREATE OR UPDATE OBJECT============");
         ReflectionData reflectionData = getReflectionData(objectData.getClass());
         
         final Field idField = reflectionData.getIdField();
-        
+    
+        idField.setAccessible(true);
         final Object id = idField.get(objectData);
         
         if (ClassUtils.isPrimitiveOrWrapper(idField.getType())) {
@@ -187,17 +228,20 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
                                                   .getConnection()
                                                   .prepareStatement(sql)) {
             ps.setLong(1, id);
-            
+    
             try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     final Field[] fields = reflectionData.getFields();
-                    
+    
                     for (int i = 0; i < fields.length; i++) {
                         getParameter(i + 1, resultSet, fields[i], objectData);
                     }
                 }
             }
-            
+    
+        } catch (SQLException e) {
+            logger.error("Error fetching {} with id {}", clazz.getSimpleName(), id);
+            throw new DbExecutorException();
         }
         
         sessionManager.commitSession();
@@ -270,27 +314,32 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
     
     private void getParameter(int index, ResultSet rs, Field field, Object object) throws SQLException, IllegalAccessException {
         field.setAccessible(true);
-        
-        final ResultSetMetaData metaData   = rs.getMetaData();
-        final String            columnType = metaData.getColumnClassName(index);
-        
-        if (columnType.equals(Byte.class.getName())) {
+    
+        final Class<?> type;
+    
+        if (field.getType().isPrimitive()) {
+            type = ClassUtils.primitiveToWrapper(field.getType());
+        } else {
+            type = field.getType();
+        }
+    
+        if (type.equals(Byte.class)) {
             field.set(object, rs.getByte(index));
-        } else if (columnType.equals(Short.class.getName())) {
+        } else if (type.equals(Short.class)) {
             field.set(object, rs.getShort(index));
-        } else if (columnType.equals(Integer.class.getName())) {
+        } else if (type.equals(Integer.class)) {
             field.set(object, rs.getInt(index));
-        } else if (columnType.equals(Long.class.getName())) {
+        } else if (type.equals(Long.class)) {
             field.set(object, rs.getLong(index));
-        } else if (columnType.equals(Float.class.getName())) {
+        } else if (type.equals(Float.class)) {
             field.set(object, rs.getFloat(index));
-        } else if (columnType.equals(Double.class.getName())) {
+        } else if (type.equals(Double.class)) {
             field.set(object, rs.getDouble(index));
-        } else if (columnType.equals(BigDecimal.class.getName())) {
+        } else if (type.equals(BigDecimal.class)) {
             field.set(object, rs.getBigDecimal(index));
-        } else if (columnType.equals(Boolean.class.getName())) {
+        } else if (type.equals(Boolean.class)) {
             field.set(object, rs.getBoolean(index));
-        } else if (columnType.equals(String.class.getName()) || columnType.equals(Character.class.getName())) {
+        } else if (type.equals(String.class) || type.equals(Character.class)) {
             field.set(object, rs.getString(index));
         }
     }

@@ -9,7 +9,7 @@ public class Account {
     
     private String type;
     
-    private Number rest;
+    private Float rest;
     
     @Override
     public String toString() {
@@ -36,11 +36,11 @@ public class Account {
         this.type = type;
     }
     
-    public Number getRest() {
+    public Float getRest() {
         return rest;
     }
     
-    public void setRest(Number rest) {
+    public void setRest(Float rest) {
         this.rest = rest;
     }
 }
