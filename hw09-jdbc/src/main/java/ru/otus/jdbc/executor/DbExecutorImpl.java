@@ -248,19 +248,21 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
         Class<?> aClass = value.getClass();
         
         if (aClass.equals(Byte.class)) {
-            ps.setByte(index, (byte) value);
+            ps.setByte(index, (Byte) value);
         } else if (aClass.equals(Short.class)) {
-            ps.setShort(index, (short) value);
+            ps.setShort(index, (Short) value);
         } else if (aClass.equals(Integer.class)) {
-            ps.setInt(index, (int) value);
+            ps.setInt(index, (Integer) value);
         } else if (aClass.equals(Long.class)) {
-            ps.setLong(index, (long) value);
+            ps.setLong(index, (Long) value);
         } else if (aClass.equals(Float.class)) {
-            ps.setFloat(index, (float) value);
+            ps.setFloat(index, (Float) value);
         } else if (aClass.equals(Double.class)) {
-            ps.setDouble(index, (double) value);
+            ps.setDouble(index, (Double) value);
+        } else if (aClass.equals(BigDecimal.class)) {
+            ps.setBigDecimal(index, (BigDecimal) value);
         } else if (aClass.equals(Boolean.class)) {
-            ps.setBoolean(index, (boolean) value);
+            ps.setBoolean(index, (Boolean) value);
         } else if (aClass.equals(String.class) || aClass.equals(Character.class)) {
             ps.setString(index, value.toString());
         }

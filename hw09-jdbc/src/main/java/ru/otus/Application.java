@@ -16,23 +16,23 @@ public class Application {
         DbExecutorImpl<User> userDbExecutor = new DbExecutorImpl<>(sessionManagerJdbc);
 
         try {
-//            User user = new User();
-//            user.setName("Bob");
-//            user.setAge(25);
-//            userDbExecutor.create(user);
-//
-//            final User load = userDbExecutor.load(user.getId(), User.class);
-//
-//            load.setName("Rob");
-//            load.setAge(16);
-//            userDbExecutor.update(load);
-//
-//            var newUser = new User();
-//            newUser.setName("Joe");
-//            newUser.setAge(18);
-//            userDbExecutor.createOrUpdate(newUser);
-//
-//
+            User user = new User();
+            user.setName("Bob");
+            user.setAge(25);
+            userDbExecutor.create(user);
+    
+            final User load = userDbExecutor.load(user.getId(), User.class);
+    
+            load.setName("Rob");
+            load.setAge(16);
+            userDbExecutor.update(load);
+    
+            var newUser = new User();
+            newUser.setName("Joe");
+            newUser.setAge(18);
+            userDbExecutor.createOrUpdate(newUser);
+
+
             var accountDbExecutor = new DbExecutorImpl<>(sessionManagerJdbc);
             var account           = new Account();
     
