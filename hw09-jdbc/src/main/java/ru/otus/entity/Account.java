@@ -10,7 +10,15 @@ public class Account {
     private String type;
     
     private Float rest;
-    
+
+    public Account() {
+    }
+
+    public Account(String type, Float rest) {
+        this.type = type;
+        this.rest = rest;
+    }
+
     @Override
     public String toString() {
         return "Account{" +
