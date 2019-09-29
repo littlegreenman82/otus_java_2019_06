@@ -10,7 +10,7 @@ public interface DbExecutor<T> {
 
     void createOrUpdate(T objectData) throws DbExecutorException;
 
-    <T1> T1 load(long id, Class<T1> clazz) throws Exception;
+    <T1> T1 load(long id, Class<T1> clazz) throws DbExecutorException;
 
     void delete(T objectData) throws DbExecutorException;
 }

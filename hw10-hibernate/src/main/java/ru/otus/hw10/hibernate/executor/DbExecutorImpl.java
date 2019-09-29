@@ -78,7 +78,7 @@ public class DbExecutorImpl<T> implements DbExecutor<T> {
     }
 
     @Override
-    public <T1> T1 load(long id, Class<T1> clazz) throws Exception {
+    public <T1> T1 load(long id, Class<T1> clazz) throws DbExecutorException {
         logger.info("============LOAD OBJECT FROM DB============");
         T1 objectData = null;
 
