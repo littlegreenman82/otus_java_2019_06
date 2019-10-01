@@ -9,6 +9,7 @@ import ru.otus.hw10.entity.Address;
 import ru.otus.hw10.entity.Phone;
 import ru.otus.hw10.entity.User;
 import ru.otus.hw10.hibernate.HibernateUtils;
+import ru.otus.hw10.hibernate.exception.DaoException;
 import ru.otus.hw10.hibernate.sessionmanager.SessionManagerHibernate;
 
 public class Application {
@@ -38,9 +39,11 @@ public class Application {
 
             final var load = userDao.get(freddy.getId());
 
-            load.ifPresent(userDao::delete);
+            if (load.isPresent()) {
+                userDao.delete(load.get());
+            }
 
-        } catch (Exception e) {
+        } catch (DaoException e) {
             logger.error(e.getMessage());
         }
     }
