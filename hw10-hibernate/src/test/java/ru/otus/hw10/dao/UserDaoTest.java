@@ -1,10 +1,11 @@
-package ru.otus.hw10.hibernate.executor;
+package ru.otus.hw10.dao;
 
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.otus.hw10.api.DbExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.otus.hw10.api.SessionManager;
 import ru.otus.hw10.entity.Address;
 import ru.otus.hw10.entity.Phone;
@@ -12,12 +13,15 @@ import ru.otus.hw10.entity.User;
 import ru.otus.hw10.hibernate.HibernateUtils;
 import ru.otus.hw10.hibernate.sessionmanager.SessionManagerHibernate;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("Сервис для работы с сущностями должен ")
-class DbExecutorImplTest {
+class UserDaoTest {
 
-    private DbExecutor<User> dbExecutorUser;
+    private UserDao userDao;
+
+    private Logger logger = LoggerFactory.getLogger(UserDaoTest.class);
 
     @BeforeEach
     void setUp() {
@@ -29,15 +33,15 @@ class DbExecutorImplTest {
         );
 
         SessionManager sessionManager = new SessionManagerHibernate(sessionFactory);
-        dbExecutorUser = new DbExecutorImpl<>(sessionManager);
+        this.userDao = new UserDao(sessionManager);
     }
 
     @Test
     @DisplayName("корректно создавать пользователя с зависимыми сущностями")
-    void createUserWithRelatedEntities() {
+    void saveUserWithRelatedEntities() {
         final var user = createUserTemplateObjectWithRelatedData();
 
-        assertDoesNotThrow(() -> dbExecutorUser.create(user));
+        assertDoesNotThrow(() -> userDao.save(user));
         assertNotEquals(0, user.getId());
 
         user.getPhones().forEach(phone -> assertNotEquals(0, phone.getId()));
@@ -48,9 +52,8 @@ class DbExecutorImplTest {
     void update() {
         final var user = createUserTemplateObjectWithRelatedData();
 
-        assertDoesNotThrow(() -> dbExecutorUser.create(user));
+        assertDoesNotThrow(() -> userDao.save(user));
         assertNotEquals(0, user.getId());
-
 
         final var oldId = user.getId();
         user.setName("JW");
@@ -58,24 +61,10 @@ class DbExecutorImplTest {
         final var oldAddressId = user.getAddress().getId();
         user.getAddress().setStreet("221");
 
-        assertDoesNotThrow(() -> dbExecutorUser.update(user));
+        assertDoesNotThrow(() -> userDao.update(user));
         assertEquals(oldId, user.getId());
         assertEquals("JW", user.getName());
         assertEquals(oldAddressId, user.getAddress().getId());
-    }
-
-    @Test
-    @DisplayName("корректно обновлять или создавать новую запись")
-    void createOrUpdate() {
-        final var user = new User("GH", null);
-
-        assertDoesNotThrow(() -> dbExecutorUser.createOrUpdate(user));
-        final var id = user.getId();
-        assertNotEquals(0, id);
-        user.setName("JW");
-
-        assertDoesNotThrow(() -> dbExecutorUser.createOrUpdate(user));
-        assertEquals(id, user.getId());
     }
 
     @Test
@@ -84,12 +73,31 @@ class DbExecutorImplTest {
         final var user = createUserTemplateObjectWithRelatedData();
 
         assertDoesNotThrow(() -> {
-            dbExecutorUser.create(user);
-            final var loadedUser = dbExecutorUser.load(user.getId(), User.class);
+            userDao.save(user);
+            final Optional<User> loadedUserOptional = userDao.get(user.getId());
 
-            assertEquals(loadedUser.getId(), user.getId());
-            assertEquals(loadedUser.getName(), user.getName());
-            assertEquals(loadedUser.getAddress().getStreet(), user.getAddress().getStreet());
+            loadedUserOptional.ifPresent((loadedUser) -> {
+                assertEquals(loadedUser.getId(), user.getId());
+                assertEquals(loadedUser.getName(), user.getName());
+                assertEquals(loadedUser.getAddress().getStreet(), user.getAddress().getStreet());
+            });
+        });
+    }
+
+    @Test
+    @DisplayName("корректно загружать пользователя из бд с ленивой загрузкой связанных данных")
+    void loadWithLazyCollection() {
+        final var user = createUserTemplateObjectWithRelatedData();
+
+        assertDoesNotThrow(() -> {
+            userDao.save(user);
+            final Optional<User> loadedUserOptional = userDao.get(user.getId());
+
+            loadedUserOptional.ifPresent((loadedUser) -> {
+                final var phones = loadedUser.getPhones();
+
+                logger.info("Fetched lazy loaded collection: {}", phones);
+            });
         });
     }
 
@@ -99,12 +107,12 @@ class DbExecutorImplTest {
         final var user = createUserTemplateObjectWithRelatedData();
 
         assertDoesNotThrow(() -> {
-            dbExecutorUser.create(user);
-            dbExecutorUser.delete(user);
+            userDao.save(user);
+            userDao.delete(user);
 
-            final var loadedUser = dbExecutorUser.load(user.getId(), User.class);
+            final var loadedUser = userDao.get(user.getId());
 
-            assertNull(loadedUser);
+            assertTrue(loadedUser.isEmpty());
         });
     }
 
