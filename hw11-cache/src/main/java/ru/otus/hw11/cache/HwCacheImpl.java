@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("WeakerAccess")
 public class HwCacheImpl<K, V> implements HwCache<K, V> {
     private static final String PUT_ACTION = "put";
     private static final String REMOVE_ACTION = "remove";
@@ -56,5 +57,9 @@ public class HwCacheImpl<K, V> implements HwCache<K, V> {
         this.listenerWeakRefList = listenerWeakRefList.stream()
                 .filter(weakReference -> weakReference.get() != listener)
                 .collect(Collectors.toList());
+    }
+
+    public int size() {
+        return cache.size();
     }
 }
