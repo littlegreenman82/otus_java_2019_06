@@ -27,6 +27,7 @@
         <module>hw08-serialization</module>
         <module>hw09-jdbc</module>
         <module>hw10-hibernate</module>
+        <module>hw11-cache</module>
     </modules>
 
     <properties>
