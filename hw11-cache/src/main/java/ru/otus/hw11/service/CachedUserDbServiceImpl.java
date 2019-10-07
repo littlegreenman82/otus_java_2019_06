@@ -28,4 +28,10 @@ public class CachedUserDbServiceImpl extends UserDbServiceImpl {
 
         return userOptional;
     }
+
+    @Override
+    public void save(User object) throws DbServiceException {
+        super.save(object);
+        cache.put(object.getId(), object);
+    }
 }

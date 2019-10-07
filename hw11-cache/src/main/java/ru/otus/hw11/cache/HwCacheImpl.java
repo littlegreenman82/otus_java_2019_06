@@ -11,7 +11,7 @@ public class HwCacheImpl<K, V> implements HwCache<K, V> {
     private static final String PUT_ACTION = "put";
     private static final String REMOVE_ACTION = "remove";
 
-    private WeakHashMap<K, V> cache;
+    private final WeakHashMap<K, V> cache;
     private List<WeakReference<HwCacheListener<K, V>>> listenerWeakRefList;
 
     public HwCacheImpl() {
