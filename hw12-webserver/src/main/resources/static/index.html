@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Web App</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="login-page">
+    <div class="form">
+        <form class="login-form">
+            <label>
+                <input id="username" onclick="removeError()" placeholder="username" type="text"/>
+            </label>
+            <label>
+                <input id="password" onclick="removeError()" placeholder="password" type="password"/>
+            </label>
+            <button>login</button>
+        </form>
+    </div>
+</div>
+
+<script crossorigin="anonymous"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script type="text/javascript">
+    function removeError() {
+        $("#username").removeClass("error");
+        $("#password").removeClass("error");
+    }
+
+    $(document).ready(function () {
+        $(".login-form").on('submit', function (e) {
+            e.preventDefault();
+            $.post("/api/login", {
+                "username": $("#username").val(),
+                "password": $("#password").val()
+            }).done(function (json) {
+                if (json.success) {
+                    localStorage.setItem("token", json.token);
+                    window.location.href = "/users.html";
+                } else {
+                    $("#username").addClass("error");
+                    $("#password").addClass("error");
+                }
+            })
+        });
+    });
+</script>
+</body>
+</html>

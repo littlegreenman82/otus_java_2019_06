@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Web App</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="form" style="max-width: 600px">
+    <h3>Пользователи</h3><br>
+
+    <label for="name"></label><input id="name" placeholder="введите имя" type="text">
+    <button onclick="addUser()">Добавить пользователя</button>
+    <br><br>
+    <table style="width: 100%">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+        </tr>
+        </thead>
+        <tbody id="user-list">
+
+        </tbody>
+    </table>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script type="text/javascript">
+    function addUser() {
+        $.post("/api/users/add", {
+            "name": $("#name").val()
+        }).done(function () {
+            $("#user-list").empty();
+            fetchUsers();
+        })
+    }
+
+    function fetchUsers() {
+        $.get("/api/users").done(function (list) {
+            for (let i = 0; i < list.length; i++) {
+                $("#user-list").append(`<tr><td>${list[i].id}</td><td>${list[i].name}</td></tr>`);
+            }
+        })
+    }
+
+    $(document).ready(function () {
+        if (localStorage.getItem("token").length === 0) {
+            location.href = "/";
+        }
+
+        fetchUsers();
+    });
+</script>
+</body>
+</html>
