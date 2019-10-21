@@ -34,6 +34,11 @@ public class UsersServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         var name = req.getParameter("name");
+
+        if (name == null || name.length() == 0) {
+            resp.setStatus(400);
+        }
+
         var user = new User();
         user.setName(name);
 

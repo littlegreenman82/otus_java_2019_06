@@ -15,12 +15,11 @@
     <table style="width: 100%">
         <thead>
         <tr>
-            <th>id</th>
-            <th>name</th>
+            <th>ID</th>
+            <th>Имя</th>
         </tr>
         </thead>
         <tbody id="user-list">
-
         </tbody>
     </table>
 </div>
@@ -29,27 +28,60 @@
         src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <script type="text/javascript">
-    function addUser() {
-        $.post("/api/users/add", {
-            "name": $("#name").val()
-        }).done(function () {
-            $("#user-list").empty();
-            fetchUsers();
-        })
-    }
+    const errorHandler = error => {
+        switch (error.status) {
+            case 403:
+                location.href = '/';
+                break;
+            case 400:
+                $("#name").addClass("error");
+                break;
+            default:
+                return;
+        }
+    };
 
-    function fetchUsers() {
-        $.get("/api/users").done(function (list) {
+    const addUser = () => {
+        let nameInput = $("#name");
+        let value = nameInput.val();
+
+        if (value.length > 0) {
+            $.post("/api/users/add", {
+                "name": value
+            }).done(() => {
+                $("#user-list").empty();
+                fetchUsers();
+                $("#name").val('');
+            }).fail(errorHandler);
+        } else {
+            nameInput.addClass('error');
+        }
+    };
+
+    const fetchUsers = () => {
+        $.get("/api/users").done(list => {
             for (let i = 0; i < list.length; i++) {
                 $("#user-list").append(`<tr><td>${list[i].id}</td><td>${list[i].name}</td></tr>`);
             }
-        })
-    }
+        }).fail(errorHandler);
+    };
 
-    $(document).ready(function () {
-        if (localStorage.getItem("token").length === 0) {
+    $(document).on('keypress', (e) => {
+        if (e.which === 13) addUser();
+    });
+
+    $(document).ready(() => {
+        $('#name').on('keydown', () => $("#name").removeClass('error'));
+
+        if (localStorage.getItem("token") && localStorage.getItem("token").length === 0) {
             location.href = "/";
         }
+
+        $.ajaxSetup({
+            headers: {
+                'Authorization': localStorage.getItem("token")
+            }
+        });
 
         fetchUsers();
     });
