@@ -56,6 +56,7 @@ public class Application {
         servletContextHandler.addServlet(new ServletHolder(new IndexServlet()), "/");
 
         servletContextHandler.addFilter(new FilterHolder(new AuthorizationFilter()), "/api/users", null);
+        servletContextHandler.addFilter(new FilterHolder(new AuthorizationFilter()), "/api/users/*", null);
 
         var resourceHandler = new ResourceHandler();
         var resource = Resource.newClassPathResource(STATIC);
