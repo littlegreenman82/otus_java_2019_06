@@ -25,7 +25,7 @@ public class UsersServlet extends BaseServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
             var users = userDbService.findAll();
-            this.json(resp, users);
+            this.writeDataToResponseAsJson(resp, users);
         } catch (DbServiceException e) {
             logger.error(e.getMessage());
         }
@@ -44,7 +44,7 @@ public class UsersServlet extends BaseServlet {
 
         try {
             userDbService.save(user);
-            this.json(resp, user);
+            this.writeDataToResponseAsJson(resp, user);
         } catch (DbServiceException e) {
             logger.error(e.getMessage());
         }

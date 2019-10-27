@@ -12,9 +12,9 @@ public class AuthServlet extends BaseServlet {
         var password = req.getParameter("password");
 
         if (username.equals("admin") && password.equals("admin")) {
-            this.json(resp, new AuthResult(true, "123456"));
+            this.writeDataToResponseAsJson(resp, new AuthResult(true, "123456"));
         } else {
-            this.json(resp, new AuthResult(false, null));
+            this.writeDataToResponseAsJson(resp, new AuthResult(false, null));
         }
     }
 

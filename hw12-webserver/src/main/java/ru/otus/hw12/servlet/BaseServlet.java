@@ -15,7 +15,7 @@ public class BaseServlet extends HttpServlet {
         this.gson = new Gson();
     }
 
-    protected void json(HttpServletResponse resp, Object data) throws IOException {
+    protected void writeDataToResponseAsJson(HttpServletResponse resp, Object data) throws IOException {
         resp.setContentType(APPLICATION_JSON);
         try (var outputStream = resp.getOutputStream()) {
             outputStream.print(gson.toJson(data));
