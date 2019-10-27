@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Web App</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="form" style="max-width: 600px">
+    <h3>Пользователи</h3><br>
+
+    <label for="name"></label><input id="name" placeholder="введите имя" type="text">
+    <button onclick="addUser()">Добавить пользователя</button>
+    <br><br>
+    <table style="width: 100%">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Имя</th>
+        </tr>
+        </thead>
+        <tbody id="user-list">
+        </tbody>
+    </table>
+</div>
+<script crossorigin="anonymous"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+<script type="text/javascript">
+    const errorHandler = error => {
+        switch (error.status) {
+            case 403:
+                location.href = '/';
+                break;
+            case 400:
+                $("#name").addClass("error");
+                break;
+            default:
+                return;
+        }
+    };
+
+    const addUser = () => {
+        let nameInput = $("#name");
+        let value = nameInput.val();
+
+        if (value.length > 0) {
+            $.post("/api/users/add", {
+                "name": value
+            }).done(() => {
+                $("#user-list").empty();
+                fetchUsers();
+                $("#name").val('');
+            }).fail(errorHandler);
+        } else {
+            nameInput.addClass('error');
+        }
+    };
+
+    const fetchUsers = () => {
+        $.get("/api/users").done(list => {
+            for (let i = 0; i < list.length; i++) {
+                $("#user-list").append(`<tr><td>${list[i].id}</td><td>${list[i].name}</td></tr>`);
+            }
+        }).fail(errorHandler);
+    };
+
+    $(document).on('keypress', (e) => {
+        if (e.which === 13) addUser();
+    });
+
+    $(document).ready(() => {
+        $('#name').on('keydown', () => $("#name").removeClass('error'));
+
+        if (localStorage.getItem("token") && localStorage.getItem("token").length === 0) {
+            location.href = "/";
+        }
+
+        $.ajaxSetup({
+            headers: {
+                'Authorization': localStorage.getItem("token")
+            }
+        });
+
+        fetchUsers();
+    });
+</script>
+</body>
+</html>
