@@ -78,7 +78,7 @@ public class UserDbServiceImpl implements UserDbService {
         try (var sessionManager = userDao.getSessionManager()) {
             try {
                 sessionManager.beginSession();
-                var all = userDao.all();
+                var all = userDao.findAll();
                 all.forEach(user -> Hibernate.initialize(user.getPhones()));
                 sessionManager.commitSession();
 

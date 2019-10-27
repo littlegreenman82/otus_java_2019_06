@@ -38,7 +38,7 @@ public class UserDao implements Dao<User> {
     }
 
     @Override
-    public List<User> all() {
+    public List<User> findAll() {
         return sessionManager.getCurrentSession()
                 .getHibernateSession()
                 .createQuery("select u from ru.otus.hw12.entity.User u", User.class).getResultList();
