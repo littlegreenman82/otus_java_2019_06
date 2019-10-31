@@ -29,6 +29,7 @@
         <module>hw10-hibernate</module>
         <module>hw11-cache</module>
         <module>hw12-webserver</module>
+        <module>hw13-DI</module>
     </modules>
 
     <properties>
@@ -38,7 +39,12 @@
         <google.guava.version>28.0-jre</google.guava.version>
         <!--endregion-->
 
+        <!--region BOMs -->
+        <spring-boot.version>2.2.0.RELEASE</spring-boot.version>
+        <!--endregion-->
+
         <!--region Libs-->
+        <annotations.version>17.0.0</annotations.version>
         <jetty.version>9.4.20.v20190813</jetty.version>
         <gson.version>2.8.5</gson.version>
         <com.google.guava.version>${google.guava.version}</com.google.guava.version>
@@ -58,11 +64,25 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven-surefire-plugin.version>3.0.0-M3</maven-surefire-plugin.version>
+        <maven-war-plugin.version>3.2.3</maven-war-plugin.version>
         <!--endregion-->
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${annotations.version}</version>
+                <scope>provided</scope>
+            </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
@@ -198,6 +218,10 @@
                 <plugin>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
