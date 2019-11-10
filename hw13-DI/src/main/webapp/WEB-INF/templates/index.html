@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--suppress HtmlUnknownTarget, JSUnresolvedLibraryURL -->
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Base Web App</title>
@@ -11,7 +11,7 @@
     <h3>Пользователи</h3><br>
 
     <label for="name"></label><input id="name" placeholder="введите имя" type="text">
-    <button onclick="addUser()">Добавить пользователя</button>
+    <button id="saveBtn" onclick="addUser()" th:url="${#request.getContextPath()}">Добавить пользователя</button>
     <br><br>
     <table style="width: 100%">
         <thead>
@@ -29,6 +29,7 @@
         src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <script type="text/javascript">
+    let baseUrl = $('#saveBtn').attr('url');
     const errorHandler = error => {
         switch (error.status) {
             case 403:
@@ -49,7 +50,7 @@
         if (value.length > 0) {
             $.ajax({
                 type: "POST",
-                url: "/hw13_DI_war/api/users/add",
+                url: `${baseUrl}/api/users`,
                 dataType: "json",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -68,7 +69,7 @@
     };
 
     const fetchUsers = () => {
-        $.get("/hw13_DI_war/api/users").done(list => {
+        $.get(`${baseUrl}/api/users`).done(list => {
             for (let i = 0; i < list.length; i++) {
                 $("#user-list").append(`<tr><td>${list[i].id}</td><td>${list[i].name}</td></tr>`);
             }

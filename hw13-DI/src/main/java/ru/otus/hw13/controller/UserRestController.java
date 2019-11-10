@@ -29,7 +29,7 @@ public class UserRestController {
      * @return create operation successful
      * @throws DbServiceException create operation unsuccessful
      */
-    @PostMapping("/users/add")
+    @PostMapping("/users")
     public Boolean create(@RequestBody User user) throws DbServiceException {
         userService.save(user);
 
