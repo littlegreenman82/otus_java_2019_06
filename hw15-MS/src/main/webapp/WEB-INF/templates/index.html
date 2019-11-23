@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownTarget, JSUnresolvedLibraryURL -->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Base Web App</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <script src="webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script src="webjars/sockjs-client/1.0.2/sockjs.min.js"></script>
+    <script src="webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+</head>
+<body th:url="${#request.getContextPath()}">
+<div class="form" style="max-width: 600px">
+    <div id="socket-management">
+        <button id="connectSocket">Подключиться</button>
+        <button id="disconnectSocket" style="background-color: darkred">Отключиться</button>
+    </div>
+    <br>
+    <div class="hide" id="interface">
+        <h3>Пользователи</h3><br>
+
+        <label for="name"></label><input id="name" placeholder="введите имя" type="text">
+        <button id="saveBtn" onclick="addUser()">Добавить пользователя</button>
+        <br><br>
+        <table style="width: 100%">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Имя</th>
+            </tr>
+            </thead>
+            <tbody id="user-list">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+    let baseUrl = $('body').attr('url');
+    let stompClient = null;
+
+    const addUser = () => {
+        let nameInput = $("#name");
+        let value = nameInput.val();
+
+        if (value.length > 0) {
+            stompClient.send(`/app/users.add`, {}, JSON.stringify({name: value}));
+            nameInput.val('');
+        } else {
+            nameInput.addClass('error');
+        }
+    };
+
+    const fetchUsers = response => {
+        let user = JSON.parse(response.body);
+        $("#user-list").append(`<tr><td>${user.id}</td><td>${user.name}</td></tr>`);
+    };
+
+    const onConnected = () => {
+        $('#interface').removeClass('hide');
+        stompClient.subscribe(`/topic/users`, fetchUsers)
+    };
+
+
+    const connectSocket = () => {
+        let socket = new SockJS(`${baseUrl}/ws`);
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, onConnected, (error) => console.log(error));
+    };
+
+    $(document).on('keypress', (e) => {
+        if (e.which === 13) addUser();
+    });
+
+    const disconnectSocket = () => {
+        stompClient.disconnect();
+        $('#interface').addClass('hide');
+    };
+
+    $(document).ready(() => {
+        $('#name').on('keydown', () => $("#name").removeClass('error'));
+
+        $('#connectSocket').on('click', connectSocket);
+        $('#disconnectSocket').on('click', disconnectSocket);
+    });
+</script>
+</body>
+</html>
