@@ -32,6 +32,7 @@
         <module>hw13-DI</module>
         <module>hw14-JMM</module>
         <module>hw15-MS</module>
+        <module>hw16-frontend</module>
     </modules>
 
     <properties>
