@@ -16,9 +16,7 @@ public abstract class BaseMSocketServer implements MSocketServer {
     private int connectionPort;
     private MsClient msClient;
 
-    public BaseMSocketServer(
-            MsClient msClient,
-            @Value("${service.db.port}") int connectionPort) {
+    public BaseMSocketServer(MsClient msClient, int connectionPort) {
         this.msClient = msClient;
         this.connectionPort = connectionPort;
     }
