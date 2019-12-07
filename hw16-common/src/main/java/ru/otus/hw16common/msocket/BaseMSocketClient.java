@@ -7,14 +7,14 @@ import ru.otus.hw16common.message.Message;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public abstract class MSocketClientImpl implements MSocketClient {
-    private final Logger logger = LoggerFactory.getLogger(MSocketClientImpl.class);
+public abstract class BaseMSocketClient implements MSocketClient {
+    private final Logger logger = LoggerFactory.getLogger(BaseMSocketClient.class);
 
     private String connectionHost;
 
     private int connectionPort;
 
-    public MSocketClientImpl(String connectionHost, int connectionPort) {
+    public BaseMSocketClient(String connectionHost, int connectionPort) {
         this.connectionHost = connectionHost;
         this.connectionPort = connectionPort;
     }

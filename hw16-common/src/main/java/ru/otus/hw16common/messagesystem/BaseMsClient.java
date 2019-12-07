@@ -1,36 +1,26 @@
-package ru.otus.hw16database.msclient;
+package ru.otus.hw16common.messagesystem;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import ru.otus.hw16common.common.Serializers;
 import ru.otus.hw16common.message.Message;
-import ru.otus.hw16common.messagesystem.MessageType;
-import ru.otus.hw16common.messagesystem.MsClient;
-import ru.otus.hw16common.messagesystem.RequestHandler;
-import ru.otus.hw16database.msocket.DatabaseSocketClient;
-import ru.otus.hw16database.service.GetUserDataRequestHandler;
+import ru.otus.hw16common.msocket.MSocketClient;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
-public class MsClientImpl implements MsClient {
-    private static final Logger logger = LoggerFactory.getLogger(MsClientImpl.class);
+public abstract class BaseMsClient implements MsClient {
+    private static final Logger logger = LoggerFactory.getLogger(BaseMsClient.class);
 
     private final String name;
-    private DatabaseSocketClient databaseSocketClient;
     private final Map<String, RequestHandler> handlers = new ConcurrentHashMap<>();
+    protected MSocketClient socketClient;
 
 
-    public MsClientImpl(@Value("${service.db.name}") String name,
-                        DatabaseSocketClient databaseSocketClient,
-                        GetUserDataRequestHandler userDataRequestHandler) {
+    public BaseMsClient(String name, MSocketClient databaseSocketClient) {
         this.name = name;
-        this.databaseSocketClient = databaseSocketClient;
-        this.addHandler(MessageType.SAVE_USER, userDataRequestHandler);
+        this.socketClient = databaseSocketClient;
     }
 
     @Override
@@ -45,7 +35,7 @@ public class MsClientImpl implements MsClient {
 
     @Override
     public boolean sendMessage(Message msg) {
-        boolean result = databaseSocketClient.newMessage(msg);
+        boolean result = socketClient.newMessage(msg);
         if (!result) {
             logger.error("the last message was rejected: {}", msg);
         }
@@ -77,7 +67,7 @@ public class MsClientImpl implements MsClient {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MsClientImpl msClient = (MsClientImpl) o;
+        BaseMsClient msClient = (BaseMsClient) o;
         return Objects.equals(name, msClient.name);
     }
 

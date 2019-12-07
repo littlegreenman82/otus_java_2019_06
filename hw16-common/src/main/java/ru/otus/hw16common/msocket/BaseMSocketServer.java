@@ -10,13 +10,13 @@ import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public abstract class MSocketServerImpl implements MSocketServer {
-    private final Logger logger = LoggerFactory.getLogger(MSocketServerImpl.class);
+public abstract class BaseMSocketServer implements MSocketServer {
+    private final Logger logger = LoggerFactory.getLogger(BaseMSocketServer.class);
 
     private int connectionPort;
     private MsClient msClient;
 
-    public MSocketServerImpl(
+    public BaseMSocketServer(
             MsClient msClient,
             @Value("${service.db.port}") int connectionPort) {
         this.msClient = msClient;
