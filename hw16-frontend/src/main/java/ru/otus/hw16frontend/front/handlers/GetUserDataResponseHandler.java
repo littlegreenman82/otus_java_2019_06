@@ -4,11 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.otus.hw16frontend.common.Serializers;
-import ru.otus.hw16frontend.dto.UserDTO;
+import ru.otus.hw16common.common.Serializers;
+import ru.otus.hw16common.message.Message;
+import ru.otus.hw16common.messagesystem.RequestHandler;
 import ru.otus.hw16frontend.front.FrontendService;
-import ru.otus.message.Message;
-import ru.otus.hw16frontend.messagesystem.RequestHandler;
 
 import java.util.Optional;
 import java.util.UUID;

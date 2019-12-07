@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import ru.otus.hw16database.common.Serializers;
+import ru.otus.hw16common.common.Serializers;
+import ru.otus.hw16common.message.Message;
+import ru.otus.hw16common.messagesystem.MessageType;
+import ru.otus.hw16common.messagesystem.RequestHandler;
 import ru.otus.hw16database.entity.User;
 import ru.otus.hw16database.exception.DbServiceException;
-import ru.otus.message.Message;
-import ru.otus.hw16database.messagesystem.MessageType;
-import ru.otus.hw16database.messagesystem.RequestHandler;
 
 import java.util.Optional;
 

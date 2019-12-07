@@ -4,13 +4,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.otus.hw16ms.messagesystem.*;
-import ru.otus.hw16ms.msocket.Client;
+import ru.otus.hw16common.messagesystem.MessageSystem;
+import ru.otus.hw16common.messagesystem.MessageSystemImpl;
+import ru.otus.hw16common.messagesystem.MsClient;
+import ru.otus.hw16ms.msclient.MsClientImpl;
+import ru.otus.hw16ms.msocket.MsSocketClient;
 
 @Configuration
 public class WebMSConfig {
-    private final Client clientSocketForFrontend;
-    private final Client clientSocketForDatabase;
+    private final MsSocketClient clientSocketForFrontend;
+    private final MsSocketClient msSocketClientForDatabase;
     
     @Value("${service.frontend.name}")
     private String frontendServiceName;
@@ -27,9 +30,9 @@ public class WebMSConfig {
     private int dbServicePort;
     
     @Autowired
-    public WebMSConfig(Client clientSocketForFrontend, Client clientSocketForDatabase) {
-        this.clientSocketForFrontend = clientSocketForFrontend;
-        this.clientSocketForDatabase = clientSocketForDatabase;
+    public WebMSConfig(MsSocketClient msSocketClientForFrontend, MsSocketClient msSocketClientForDatabase) {
+        this.clientSocketForFrontend = msSocketClientForFrontend;
+        this.msSocketClientForDatabase = msSocketClientForDatabase;
     }
     
     @Bean(destroyMethod = "dispose")
@@ -50,10 +53,10 @@ public class WebMSConfig {
 
     @Bean
     public MsClient databaseMsClient(MessageSystem messageSystem) {
-        clientSocketForDatabase.setConnectionHost(dbServiceHost);
-        clientSocketForDatabase.setConnectionPort(dbServicePort);
+        msSocketClientForDatabase.setConnectionHost(dbServiceHost);
+        msSocketClientForDatabase.setConnectionPort(dbServicePort);
 
-        var databaseMsClient = new MsClientImpl(dbServiceName, clientSocketForDatabase);
+        var databaseMsClient = new MsClientImpl(dbServiceName, msSocketClientForDatabase);
         messageSystem.addClient(databaseMsClient);
 
         return databaseMsClient;

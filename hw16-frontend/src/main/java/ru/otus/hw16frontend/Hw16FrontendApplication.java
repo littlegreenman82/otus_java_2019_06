@@ -5,15 +5,15 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.otus.hw16frontend.msocket.Server;
+import ru.otus.hw16frontend.msocket.FrontendSocketServer;
 
 @SpringBootApplication
 public class Hw16FrontendApplication implements ApplicationRunner {
 
-    private final Server server;
+    private final FrontendSocketServer server;
     
     @Autowired
-    public Hw16FrontendApplication(Server server) {
+    public Hw16FrontendApplication(FrontendSocketServer server) {
         this.server = server;
     }
     

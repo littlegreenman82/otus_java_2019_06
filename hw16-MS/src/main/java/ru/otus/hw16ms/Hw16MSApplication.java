@@ -5,16 +5,16 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import ru.otus.hw16ms.msocket.Server;
+import ru.otus.hw16ms.msocket.MsSocketServer;
 
 @SpringBootApplication
 public class Hw16MSApplication implements ApplicationRunner {
-    
-    private final Server socketServer;
+
+    private final MsSocketServer msSocketServer;
     
     @Autowired
-    public Hw16MSApplication(Server socketServer) {
-        this.socketServer = socketServer;
+    public Hw16MSApplication(MsSocketServer msSocketServer) {
+        this.msSocketServer = msSocketServer;
     }
     
     public static void main(String[] args) {
@@ -23,6 +23,6 @@ public class Hw16MSApplication implements ApplicationRunner {
     
     @Override
     public void run(ApplicationArguments args) {
-        socketServer.serve();
+        msSocketServer.serve();
     }
 }

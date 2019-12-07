@@ -84,6 +84,11 @@
             <artifactId>spring-integration-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ru.otus</groupId>
+            <artifactId>hw16common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
