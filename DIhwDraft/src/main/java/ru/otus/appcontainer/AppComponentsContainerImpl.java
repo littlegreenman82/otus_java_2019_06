@@ -24,12 +24,12 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
             checkConfigClass(configClass);
             final var methods = this.getConfigClassMethods(configClass);
             final Object instance = configClass.getConstructors()[0].newInstance();
-            final var annotatedMethods = Arrays.stream(methods)
+            final var annotatedMethodsOrdered = Arrays.stream(methods)
                     .filter(method -> method.isAnnotationPresent(AppComponent.class))
                     .sorted(Comparator.comparingInt(method -> method.getAnnotation(AppComponent.class).order()))
                     .collect(Collectors.toList());
             
-            for (Method method : annotatedMethods) {
+            for (Method method : annotatedMethodsOrdered) {
                 Object[] dependencies = this.getDependencies(method);
                 final var annotation = method.getAnnotation(AppComponent.class);
                 final var invokedObject = method.invoke(instance, dependencies);
