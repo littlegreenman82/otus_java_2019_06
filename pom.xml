@@ -63,7 +63,7 @@
         <h2.version>1.4.199</h2.version>
         <slf4j-api.version>1.7.28</slf4j-api.version>
         <logback.version>1.2.3</logback.version>
-        <hibernate.version>5.4.4.Final</hibernate.version>
+        <hibernate.version>5.4.24.Final</hibernate.version>
         <!--endregion-->
 
         <!--region Plugins-->
